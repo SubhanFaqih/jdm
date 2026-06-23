@@ -1,0 +1,31 @@
+{
+  "name": "jdm",
+  "version": "1.0.0",
+  "description": "jam digital masjid",
+  "homepage": "https://github.com/SubhanFaqih/jdm#readme",
+  "bugs": {
+    "url": "https://github.com/SubhanFaqih/jdm/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SubhanFaqih/jdm.git"
+  },
+  "license": "ISC",
+  "author": "subhan",
+  "type": "module",
+  "main": "server",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "task:prune": "node src/testing/run-scheduler.js prune",
+    "task:sync": "node src/testing/run-scheduler.js sync",
+    "task:hadist": "node src/testing/run-scheduler.js hadist"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.1",
+    "node-cron": "^4.4.1",
+    "nodemon": "^3.1.14"
+  }
+}
