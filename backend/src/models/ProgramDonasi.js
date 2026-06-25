@@ -16,7 +16,7 @@ const programDonasiSchema = new mongoose.Schema({
   },
   is_active: {
     type: Boolean,
-    default: true // Jika sudah selesai/terpenuhi, bisa di-nonaktifkan agar tidak muncul di layar utama
+    default: false // Jika sudah selesai/terpenuhi, bisa di-nonaktifkan agar tidak muncul di layar utama
   }
 }, { 
   timestamps: true 

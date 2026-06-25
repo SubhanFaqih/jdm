@@ -170,3 +170,41 @@ export const deleteProgramDonasi = async (req, res) => {
     });
   }
 };
+
+/**
+ * PATCH /api/program-donasi/:id/toggle-active
+ * Set a specific donation program to active and all others to inactive
+ */
+export const toggleActiveDonasi = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const program = await ProgramDonasi.findById(id);
+    if (!program) {
+      return res.status(404).json({
+        success: false,
+        message: `Donation program with ID "${id}" not found.`
+      });
+    }
+
+    // Set all programs to inactive
+    await ProgramDonasi.updateMany({}, { is_active: false });
+
+    // Set the selected one to active
+    program.is_active = true;
+    await program.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Donation program "${program.nama_program}" is now active.`,
+      data: program
+    });
+  } catch (error) {
+    console.error("Error in toggleActiveDonasi:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to toggle active donation program.",
+      error: error.message
+    });
+  }
+};

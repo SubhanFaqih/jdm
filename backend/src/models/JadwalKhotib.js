@@ -14,10 +14,6 @@ const jadwalKhotibSchema = new mongoose.Schema({
   tema: {
     type: String,
     default: '' // Opsional, bisa dikosongkan
-  },
-  is_utama: {
-    type: Boolean,
-    default: false // True jika ustadz utama yang ada poster/temanya seperti di gambar
   }
 }, { 
   timestamps: true 

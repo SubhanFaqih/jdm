@@ -66,7 +66,12 @@ export const getUstadzById = async (req, res) => {
  */
 export const createUstadz = async (req, res) => {
   try {
-    const { nama, foto_url, no_hp, is_active } = req.body;
+    const { nama, no_hp, is_active } = req.body;
+    let foto_url = req.body.foto_url || 'https://example.com/images/default-avatar.jpg';
+
+    if (req.file) {
+      foto_url = `/uploads/${req.file.filename}`;
+    }
 
     if (!nama) {
       return res.status(400).json({
@@ -106,7 +111,12 @@ export const createUstadz = async (req, res) => {
 export const updateUstadz = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nama, foto_url, no_hp, is_active } = req.body;
+    const { nama, no_hp, is_active } = req.body;
+    let foto_url = req.body.foto_url;
+
+    if (req.file) {
+      foto_url = `/uploads/${req.file.filename}`;
+    }
 
     const ustadz = await Ustadz.findById(id);
 

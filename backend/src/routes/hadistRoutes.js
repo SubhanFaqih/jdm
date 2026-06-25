@@ -1,10 +1,13 @@
-import express from 'express';
-import { 
-  getDailyHadist, 
+import express from "express";
+import {
+  getDailyHadist,
   syncExternalHadist,
   getThemes,
-  saveThemes
-} from '../controllers/hadistController.js';
+  getThemeById,
+  createTheme,
+  updateTheme,
+  deleteTheme,
+} from "../controllers/hadistController.js";
 
 const router = express.Router();
 
@@ -14,8 +17,11 @@ router.get("/", getDailyHadist);
 // Route to sync 20 random hadiths for a theme from external API to local DB
 router.post("/sync", syncExternalHadist);
 
-// Routes to get/save configurable hadith themes from frontend
+// Routes to manage hadith themes
 router.get("/themes", getThemes);
-router.post("/themes", saveThemes);
+router.get("/themes/:id", getThemeById);
+router.post("/themes", createTheme);
+router.put("/themes/:id", updateTheme);
+router.delete("/themes/:id", deleteTheme);
 
 export default router;

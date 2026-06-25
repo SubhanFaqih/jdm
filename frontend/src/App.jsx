@@ -1,61 +1,40 @@
-import { Header } from './components/layout/Header';
-import { PrayerSidebar } from './components/layout/PrayerSidebar';
-import { FooterMarquee } from './components/layout/FooterMarquee';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeProvider';
+import { Home } from './pages/Home';
+import { AdminLayout } from './components/layout/AdminLayout';
 
-import { TemplateKeuangan } from './pages/Home/components/TemplateKeuangan';
-import { TemplateKhotib } from './pages/Home/components/TemplateKhotib';
-import { TemplateHadist } from './pages/Home/components/TemplateHadist';
-
-import { useTemplateCycle } from './hooks/useTemplateCycle';
-import { ASSETS } from './utils/constants';
-import { AnimatePresence } from 'framer-motion';
+// Admin Pages
+import { Dashboard } from './pages/Admin/Dashboard';
+import { UstadzPage } from './pages/Admin/Ustadz';
+import { JadwalKhotibPage } from './pages/Admin/JadwalKhotib';
+import { ProgramDonasiPage } from './pages/Admin/ProgramDonasi';
+import { KasPage } from './pages/Admin/Kas';
+import { ProfileMasjidPage } from './pages/Admin/ProfileMasjid';
+import { HadistPage } from './pages/Admin/Hadist';
+import { AuditLogPage } from './pages/Admin/AuditLog';
 
 function App() {
-  // 3 templates, switch every 30 seconds (30000 ms)
-  const templateIndex = useTemplateCycle(3, 30000);
-
   return (
-    <div 
-      className="relative w-screen h-screen flex flex-col overflow-hidden bg-brand-bg-primary text-brand-secondary"
-    >
-      {/* Background Image Global (Islamic Pattern) */}
-      <div 
-        className="absolute inset-0 z-0 bg-repeat opacity-25"
-        style={{ backgroundImage: `url(${ASSETS.background})`, backgroundSize: '400px' }}
-      />
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public / Digital Signage */}
+          <Route path="/" element={<Home />} />
 
-      {/* Top Header */}
-      <div className="relative z-10 flex-none w-full">
-        <Header />
-      </div>
-
-      {/* Main Body */}
-      <div className="relative z-10 flex-1 flex flex-row overflow-hidden w-full max-w-[1920px] mx-auto px-10 py-6 gap-10">
-        
-        {/* Kolom Kiri: Sidebar Jam & Jadwal Sholat */}
-        <div className="w-[380px] flex-none h-full">
-          <PrayerSidebar />
-        </div>
-
-        {/* Kolom Kanan: Area Template Dinamis */}
-        <div className="flex-1 flex items-center justify-center h-full overflow-hidden bg-transparent">
-          <div className="w-full h-full max-w-7xl max-h-full flex flex-col justify-center">
-            <AnimatePresence mode="wait">
-              {templateIndex === 0 && <TemplateKeuangan key="keuangan" />}
-              {templateIndex === 1 && <TemplateKhotib key="khotib" />}
-              {templateIndex === 2 && <TemplateHadist key="hadist" />}
-            </AnimatePresence>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Bottom Footer Marquee */}
-      <div className="relative z-20 flex-none w-full">
-        <FooterMarquee />
-      </div>
-
-    </div>
+          {/* Admin Panel */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="ustadz" element={<UstadzPage />} />
+            <Route path="khotib" element={<JadwalKhotibPage />} />
+            <Route path="donasi" element={<ProgramDonasiPage />} />
+            <Route path="kas" element={<KasPage />} />
+            <Route path="profile" element={<ProfileMasjidPage />} />
+            <Route path="hadist" element={<HadistPage />} />
+            <Route path="audit-logs" element={<AuditLogPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

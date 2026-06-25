@@ -8,14 +8,7 @@ import Ustadz from "../models/Ustadz.js";
  */
 export const getJadwalKhotibList = async (req, res) => {
   try {
-    const { utama } = req.query;
-    const filter = {};
-
-    if (utama !== undefined) {
-      filter.is_utama = utama === 'true';
-    }
-
-    const list = await JadwalKhotib.find(filter)
+    const list = await JadwalKhotib.find({})
       .populate('ustadz_id')
       .sort({ tanggal: 1 });
 
@@ -70,7 +63,7 @@ export const getJadwalKhotibById = async (req, res) => {
  */
 export const createJadwalKhotib = async (req, res) => {
   try {
-    const { tanggal, ustadz_id, tema, is_utama } = req.body;
+    const { tanggal, ustadz_id, tema } = req.body;
 
     if (!tanggal || !ustadz_id) {
       return res.status(400).json({
@@ -101,8 +94,7 @@ export const createJadwalKhotib = async (req, res) => {
     const newSchedule = new JadwalKhotib({
       tanggal: targetDate,
       ustadz_id,
-      tema: tema || '',
-      is_utama: is_utama !== undefined ? is_utama : false
+      tema: tema || ''
     });
 
     const saved = await newSchedule.save();
@@ -130,7 +122,7 @@ export const createJadwalKhotib = async (req, res) => {
 export const updateJadwalKhotib = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tanggal, ustadz_id, tema, is_utama } = req.body;
+    const { tanggal, ustadz_id, tema } = req.body;
 
     const schedule = await JadwalKhotib.findById(id);
 
@@ -169,7 +161,6 @@ export const updateJadwalKhotib = async (req, res) => {
     }
 
     if (tema !== undefined) schedule.tema = tema;
-    if (is_utama !== undefined) schedule.is_utama = is_utama;
 
     const updated = await schedule.save();
     const populated = await updated.populate('ustadz_id');

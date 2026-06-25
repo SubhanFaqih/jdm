@@ -4,7 +4,8 @@ import {
   getProgramDonasiById,
   createProgramDonasi,
   updateProgramDonasi,
-  deleteProgramDonasi
+  deleteProgramDonasi,
+  toggleActiveDonasi
 } from '../controllers/programDonasiController.js';
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.post('/', createProgramDonasi);
 
 // PUT update program by ID
 router.put('/:id', updateProgramDonasi);
+
+// PATCH toggle active
+router.patch('/:id/toggle-active', toggleActiveDonasi);
 
 // DELETE program by ID
 router.delete('/:id', deleteProgramDonasi);

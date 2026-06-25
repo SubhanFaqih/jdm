@@ -23,6 +23,21 @@ const profileMasjidSchema = new mongoose.Schema({
   background_url: {
     type: String,
     default: ''
+  },
+  running_text: {
+    type: String,
+    default: ''
+  },
+  is_active: {
+    type: Boolean,
+    default: false
+  },
+  waktu_iqomah: {
+    subuh: { type: Number, default: 15 },
+    dzuhur: { type: Number, default: 10 },
+    ashar: { type: Number, default: 10 },
+    maghrib: { type: Number, default: 7 },
+    isya: { type: Number, default: 10 }
   }
 }, { 
   timestamps: true 
