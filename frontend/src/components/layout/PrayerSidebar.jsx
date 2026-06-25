@@ -1,11 +1,13 @@
-import { JADWAL_SHOLAT } from '../../utils/constants';
+import { useJwsData } from '../../hooks/useJwsData';
 
 export function PrayerSidebar() {
+  const { mappedJadwal } = useJwsData();
+
   return (
     <div className="w-full h-full flex flex-col pt-2">
       {/* Daftar Jadwal Sholat */}
       <div className="flex-1 flex flex-col justify-between gap-4 py-2 relative">
-        {JADWAL_SHOLAT.map((jadwal, index) => {
+        {mappedJadwal.map((jadwal, index) => {
           return (
             <div 
               key={index} 

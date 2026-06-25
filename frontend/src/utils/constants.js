@@ -57,12 +57,3 @@ export const HADIST = {
   teks: '"Barangsiapa membangun masjid karena Allah, maka Allah akan membangunkan baginya rumah di surga."',
   sumber: '(HR. Bukhari dan Muslim)'
 };
-
-export const JADWAL_SHOLAT = [
-  { name: 'Subuh', time: '04:10' },
-  { name: 'Syuruq', time: '05:25' },
-  { name: 'Dzuhur', time: '11:52' },
-  { name: 'Ashar', time: '15:19' },
-  { name: 'Maghrib', time: '18:12' },
-  { name: 'Isya', time: '19:24' },
-];

@@ -1,17 +1,22 @@
+import { useJwsData } from '../../hooks/useJwsData';
 import { CleanCard } from '../common/CleanCard';
 import { Pill } from '../common/Pill';
-import { JADWAL_SHOLAT } from '../../utils/constants';
 
 export function Sidebar() {
+  const { mappedJadwal, kota, isLoading, isError } = useJwsData();
+
   return (
     <div className="w-[300px] h-full flex flex-col gap-6 py-8 pr-8 z-20">
       {/* Title */}
       <div className="text-center mb-2">
         <h2 className="text-2xl font-bold text-slate-800">Jadwal Sholat</h2>
-        <p className="text-sm text-slate-500">Wilayah Kota Depok</p>
+        <p className="text-sm text-slate-500">Wilayah {kota}</p>
       </div>
 
-      {JADWAL_SHOLAT.map((jadwal, index) => (
+      {isLoading && <div className="text-center text-slate-500 mt-10 text-sm">Memuat jadwal...</div>}
+      {isError && <div className="text-center text-red-500 mt-10 text-sm">Gagal memuat jadwal</div>}
+
+      {mappedJadwal.map((jadwal, index) => (
         <div key={index} className="flex-1 relative flex flex-col mt-4">
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
             <Pill text={jadwal.name} className="px-8 py-2 text-sm shadow-sm" />

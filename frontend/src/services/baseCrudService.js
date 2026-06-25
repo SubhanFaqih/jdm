@@ -108,3 +108,17 @@ export const kasService = {
 };
 
 export const auditLogService = createCrudService('/api/audit-logs', 'audit log');
+
+export const jwsService = {
+  async getDailySchedule(profileId, tanggal) {
+    let url = `/api/jws?tanggal=${tanggal}`;
+    if (profileId) {
+      url += `&profile_id=${profileId}`;
+    }
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Gagal mengambil jadwal sholat');
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'Gagal mengambil jadwal sholat');
+    return json.data;
+  }
+};

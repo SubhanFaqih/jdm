@@ -11,7 +11,7 @@ import { ASSETS } from '../../utils/constants';
 import { AnimatePresence } from 'framer-motion';
 
 export function Home() {
-  // 3 templates, switch every 30 seconds (30000 ms)
+  // 3 templates, switch every 30 seconds (15000 ms)
   const templateIndex = useTemplateCycle(3, 15000);
 
   return (
