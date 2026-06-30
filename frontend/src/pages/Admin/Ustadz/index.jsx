@@ -7,11 +7,30 @@ import { Input } from '../../../components/common/Input';
 import { Toggle } from '../../../components/common/Toggle';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { ustadzService } from '../../../services/baseCrudService';
+import Cropper from 'react-easy-crop';
+import { useImageCrop } from '../../../hooks/useImageCrop';
 
 export function UstadzPage() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+
+  const {
+    imageSrc,
+    crop,
+    setCrop,
+    zoom,
+    setZoom,
+    setCroppedImageFile,
+    setCroppedImagePreview,
+    croppedImageFile,
+    croppedImagePreview,
+    onCropComplete,
+    onFileChange,
+    handleCropSave,
+    handleCancelCrop,
+    handleRemoveCroppedImage,
+  } = useImageCrop('foto_url', 'ustadz_foto.png');
 
   // Fetch Data using React Query
   const { data: ustadzData = [], isLoading } = useQuery({
@@ -42,8 +61,7 @@ export function UstadzPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ustadz'] });
-      setIsModalOpen(false);
-      setEditingItem(null);
+      handleCloseForm();
     },
     onError: (error) => {
       alert(error.message || 'Terjadi kesalahan saat menyimpan data');
@@ -61,9 +79,26 @@ export function UstadzPage() {
     }
   });
 
+  const handleOpenForm = (item) => {
+    setEditingItem(item);
+    setCroppedImageFile(null);
+    setCroppedImagePreview(null);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsModalOpen(false);
+    setEditingItem(null);
+    setCroppedImageFile(null);
+    setCroppedImagePreview(null);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    if (croppedImageFile) {
+      formData.set('foto_url', croppedImageFile, 'ustadz_foto.png');
+    }
     saveMutation.mutate(formData);
   };
 
@@ -76,7 +111,7 @@ export function UstadzPage() {
   const columns = [
     { key: 'nama', label: 'Nama' },
     { key: 'no_hp', label: 'No. HP' },
-    { 
+    {
       key: 'foto_url', 
       label: 'Foto Profil',
       render: (row) => row.foto_url ? (
@@ -104,10 +139,7 @@ export function UstadzPage() {
       <Button 
         variant="ghost" 
         className="px-2"
-        onClick={() => {
-          setEditingItem(row);
-          setIsModalOpen(true);
-        }}
+        onClick={() => handleOpenForm(row)}
       >
         <Edit2 className="w-4 h-4 text-blue-500" />
       </Button>
@@ -129,7 +161,7 @@ export function UstadzPage() {
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Ustadz</h2>
           <p className="text-slate-500 dark:text-slate-400">Kelola data ustadz / penceramah</p>
         </div>
-        <Button onClick={() => { setEditingItem(null); setIsModalOpen(true); }}>
+        <Button onClick={() => handleOpenForm(null)}>
           <Plus className="w-4 h-4" />
           Tambah Ustadz
         </Button>
@@ -147,7 +179,7 @@ export function UstadzPage() {
 
       <Modal 
         isOpen={isModalOpen} 
-        onClose={() => { setIsModalOpen(false); setEditingItem(null); }}
+        onClose={handleCloseForm}
         title={editingItem ? 'Edit Ustadz' : 'Tambah Ustadz'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -175,12 +207,35 @@ export function UstadzPage() {
               name="foto_url" 
               label="Foto Profil (Opsional)" 
               accept="image/*"
+              onChange={onFileChange}
             />
-            {editingItem?.foto_url && (
-              <p className="text-xs text-slate-500">
-                Biarkan kosong jika tidak ingin mengubah foto profil saat ini.
-              </p>
-            )}
+            {croppedImagePreview ? (
+              <div className="flex items-center gap-4 mt-2">
+                <img 
+                  src={croppedImagePreview} 
+                  alt="Cropped Preview" 
+                  className="w-16 h-16 object-cover rounded-full border border-slate-200" 
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveCroppedImage}
+                  className="text-xs text-red-500 hover:text-red-700 font-medium"
+                >
+                  Hapus / Ganti
+                </button>
+              </div>
+            ) : editingItem?.foto_url ? (
+              <div className="flex items-center gap-4 mt-2">
+                <img 
+                  src={editingItem.foto_url} 
+                  alt="Foto Saat Ini" 
+                  className="w-16 h-16 object-cover rounded-full border border-slate-200" 
+                />
+                <p className="text-xs text-slate-500">
+                  Foto saat ini. Unggah file baru untuk menggantinya.
+                </p>
+              </div>
+            ) : null}
           </div>
 
           <div className="pt-2">
@@ -193,7 +248,7 @@ export function UstadzPage() {
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} disabled={saveMutation.isPending}>
+            <Button type="button" variant="ghost" onClick={handleCloseForm} disabled={saveMutation.isPending}>
               Batal
             </Button>
             <Button type="submit" disabled={saveMutation.isPending}>
@@ -202,6 +257,52 @@ export function UstadzPage() {
           </div>
         </form>
       </Modal>
+
+      {/* Modal Crop Foto */}
+      {imageSrc && (
+        <Modal 
+          isOpen={!!imageSrc} 
+          onClose={handleCancelCrop}
+          title="Potong Foto Ustadz"
+        >
+          <div className="space-y-4">
+            <div className="relative w-full h-80 bg-slate-900 rounded-lg overflow-hidden">
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={3 / 4}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+              />
+            </div>
+            
+            <div className="space-y-1">
+              <span className="text-xs font-medium text-slate-500">Zoom</span>
+              <input 
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                aria-label="Zoom"
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-primary"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <Button type="button" variant="ghost" onClick={handleCancelCrop}>
+                Batal
+              </Button>
+              <Button type="button" onClick={handleCropSave}>
+                Potong & Simpan
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

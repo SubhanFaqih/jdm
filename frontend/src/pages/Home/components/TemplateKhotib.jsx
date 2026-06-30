@@ -1,6 +1,6 @@
 import { Pill } from "../../../components/common/Pill";
-import { ASSETS, JADWAL_KHOTIB } from "../../../utils/constants";
 import { motion } from "framer-motion";
+import { useActiveKhotib } from "../../../hooks/useActiveKhotib";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -17,7 +17,48 @@ const itemVariants = {
 };
 
 export function TemplateKhotib() {
-  const currentKhotib = JADWAL_KHOTIB[0];
+  const { currentKhotib, nextKhotibList, isLoading } = useActiveKhotib();
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-slate-500 font-medium">
+        Memuat jadwal khotib...
+      </div>
+    );
+  }
+
+  const formatDate = (dateString, includeWeekday = false) => {
+    if (!dateString) return '--';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '--';
+      return new Intl.DateTimeFormat('id-ID', {
+        weekday: includeWeekday ? 'long' : undefined,
+        day: 'numeric',
+        month: 'long',
+      }).format(date);
+    } catch {
+      return '--';
+    }
+  };
+
+  const khotibHariIni = {
+    formattedDate: currentKhotib?.tanggal ? formatDate(currentKhotib.tanggal, true) : '--',
+    nama: currentKhotib?.ustadz_id?.nama || '--',
+    foto: currentKhotib?.ustadz_id?.foto_url || '',
+    tema: currentKhotib?.tema || '--'
+  };
+
+  const listMendatang = nextKhotibList && nextKhotibList.length > 0
+    ? nextKhotibList.map(item => ({
+      dateStr: formatDate(item.tanggal),
+      nama: item.ustadz_id?.nama || '--'
+    }))
+    : [
+      { dateStr: '--', nama: '--' },
+      { dateStr: '--', nama: '--' },
+      { dateStr: '--', nama: '--' }
+    ];
 
   return (
     <motion.div
@@ -32,7 +73,7 @@ export function TemplateKhotib() {
           Jadwal Khotib Jum'at
         </h2>
         <Pill
-          text={`Jum'at, ${currentKhotib.date}`}
+          text={khotibHariIni.formattedDate}
           className="bg-brand-primary text-brand-secondary border-none shadow-md inline-flex px-8 py-2 text-lg font-extrabold uppercase tracking-wider"
         />
       </motion.div>
@@ -40,18 +81,29 @@ export function TemplateKhotib() {
       <div className="flex flex-row gap-8 w-full max-w-5xl mx-auto items-stretch">
         {/* Profil Khotib Utama */}
         <motion.div className="flex-none w-1/3" variants={itemVariants}>
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-gray-200 relative group">
-            <img
-              src={ASSETS.ustadz}
-              alt={currentKhotib.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/80 to-transparent p-6 text-center">
-              <p className="text-xs uppercase tracking-widest text-gray-500 font-medium mb-2">
+          {/* Card style matched with the schedules card (rounded-3xl, border-brand-primary/10, shadow-sm) */}
+          <div className="w-full h-full bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden shadow-sm border border-brand-primary/10 relative group min-h-[350px]">
+            {khotibHariIni.foto ? (
+              <img
+                src={khotibHariIni.foto}
+                alt={khotibHariIni.nama}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500">
+                <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            )}
+
+            {/* Floating Glassmorphic Info Card matching the design system */}
+            <div className="absolute bottom-4 left-4 right-4 bg-white/70 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-brand-primary/10 text-center flex flex-col items-center justify-center">
+              <p className="text-[10px] uppercase tracking-widest text-brand-secondary font-extrabold mb-1">
                 Khotib Hari Ini
               </p>
-              <h3 className="text-xl font-semibold text-gray-900">
-                {currentKhotib.name}
+              <h3 className="text-lg font-extrabold text-brand-secondary leading-tight line-clamp-1">
+                {khotibHariIni.nama}
               </h3>
             </div>
           </div>
@@ -69,7 +121,7 @@ export function TemplateKhotib() {
               Tema Khotbah
             </p>
             <h4 className="text-3xl font-bold text-brand-secondary leading-snug relative z-10">
-              "{currentKhotib.tema || "Keutamaan Sedekah di Bulan Suci"}"
+              {khotibHariIni.tema && khotibHariIni.tema !== '--' ? `"${khotibHariIni.tema}"` : '--'}
             </h4>
           </motion.div>
 
@@ -83,16 +135,16 @@ export function TemplateKhotib() {
               Jadwal Mendatang
             </h4>
             <div className="space-y-3 flex-1 flex flex-col justify-center">
-              {JADWAL_KHOTIB.slice(1, 4).map((item, idx) => (
+              {listMendatang.map((item, idx) => (
                 <div
                   key={idx}
                   className="flex items-center gap-4 py-3 border-b border-brand-border border-dotted last:border-b-0"
                 >
-                  <div className="text-sm font-extrabold text-brand-secondary bg-brand-primary/20 px-4 py-2 rounded-xl w-32 text-center shadow-inner">
-                    {item.date}
+                  <div className="text-sm font-extrabold text-brand-secondary bg-brand-primary/20 px-4 py-2 rounded-xl w-36 text-center shadow-inner">
+                    {item.dateStr}
                   </div>
-                  <div className="text-lg font-bold text-brand-secondary/80">
-                    {item.name}
+                  <div className="text-lg font-bold text-brand-secondary">
+                    {item.nama}
                   </div>
                 </div>
               ))}

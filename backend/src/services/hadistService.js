@@ -58,7 +58,36 @@ export const fetchRandomHadist = async (keyword, limit = 20) => {
       }
     }
 
-    return hadisList;
+    // Fetch details (takhrij) for each hadith
+    const hadisWithDetails = [];
+    for (const item of hadisList) {
+      let takhrij = "";
+      try {
+        const detailUrl = `https://api.myquran.com/v3/hadis/enc/show/${item.id}`;
+        const detailResponse = await fetch(detailUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (detailResponse.ok) {
+          const detailResult = await detailResponse.json();
+          if (detailResult.status === true && detailResult.data) {
+            takhrij = detailResult.data.takhrij || "";
+          }
+        }
+      } catch (detailError) {
+        console.error(`Error fetching detail for hadist ID ${item.id}:`, detailError.message);
+      }
+      hadisWithDetails.push({
+        ...item,
+        takhrij
+      });
+      // 100ms delay to avoid rate limit
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    return hadisWithDetails;
   } catch (error) {
     console.error("Error in fetchRandomHadist:", error.message);
     throw error;
@@ -73,12 +102,13 @@ export const syncHadistData = async (keyword, limit = 20) => {
   const normalizedKeyword = keyword.trim().toLowerCase();
 
   const apiHadist = await fetchRandomHadist(normalizedKeyword, resolvedLimit);
+  const filteredHadist = apiHadist.filter((item) => item.text.length <= 450);
 
-  if (!apiHadist || apiHadist.length === 0) {
+  if (!filteredHadist || filteredHadist.length === 0) {
     throw new Error(`No hadiths found for keyword "${keyword}" from the external API.`);
   }
 
-  const bulkOps = apiHadist.map((item) => ({
+  const bulkOps = filteredHadist.map((item) => ({
     updateOne: {
       filter: { 
         keyword: normalizedKeyword, 
@@ -89,7 +119,8 @@ export const syncHadistData = async (keyword, limit = 20) => {
           keyword: normalizedKeyword,
           hadistId: item.id,
           text: item.text,
-          focus: item.focus
+          focus: item.focus,
+          takhrij: item.takhrij
         }
       },
       upsert: true
@@ -100,7 +131,7 @@ export const syncHadistData = async (keyword, limit = 20) => {
 
   return {
     keyword: normalizedKeyword,
-    totalSynced: apiHadist.length,
+    totalSynced: filteredHadist.length,
     upsertedCount: bulkResult.upsertedCount,
     modifiedCount: bulkResult.modifiedCount
   };

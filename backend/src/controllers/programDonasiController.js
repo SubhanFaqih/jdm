@@ -76,11 +76,17 @@ export const createProgramDonasi = async (req, res) => {
       });
     }
 
+    const isActiveBool = is_active !== undefined ? (is_active === true || is_active === 'true') : false;
+    
+    if (isActiveBool) {
+      await ProgramDonasi.updateMany({}, { is_active: false });
+    }
+
     const newProgram = new ProgramDonasi({
       nama_program,
       target_dana: Number(target_dana),
       dana_terkumpul: dana_terkumpul !== undefined ? Number(dana_terkumpul) : 0,
-      is_active: is_active !== undefined ? is_active : true
+      is_active: isActiveBool
     });
 
     const saved = await newProgram.save();
@@ -122,7 +128,14 @@ export const updateProgramDonasi = async (req, res) => {
     if (nama_program !== undefined) program.nama_program = nama_program;
     if (target_dana !== undefined) program.target_dana = Number(target_dana);
     if (dana_terkumpul !== undefined) program.dana_terkumpul = Number(dana_terkumpul);
-    if (is_active !== undefined) program.is_active = is_active;
+    
+    if (is_active !== undefined) {
+      const isActiveBool = is_active === true || is_active === 'true';
+      if (isActiveBool) {
+        await ProgramDonasi.updateMany({ _id: { $ne: id } }, { is_active: false });
+      }
+      program.is_active = isActiveBool;
+    }
 
     const updated = await program.save();
 
@@ -187,16 +200,20 @@ export const toggleActiveDonasi = async (req, res) => {
       });
     }
 
+    const wasActive = program.is_active;
+
     // Set all programs to inactive
     await ProgramDonasi.updateMany({}, { is_active: false });
 
-    // Set the selected one to active
-    program.is_active = true;
-    await program.save();
+    if (!wasActive) {
+      // Set the selected one to active only if it was not active before
+      program.is_active = true;
+      await program.save();
+    }
 
     res.status(200).json({
       success: true,
-      message: `Donation program "${program.nama_program}" is now active.`,
+      message: `Donation program "${program.nama_program}" is now ${!wasActive ? 'active' : 'inactive'}.`,
       data: program
     });
   } catch (error) {

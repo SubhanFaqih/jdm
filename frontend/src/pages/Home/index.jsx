@@ -9,29 +9,42 @@ import { TemplateHadist } from './components/TemplateHadist';
 import { useTemplateCycle } from '../../hooks/useTemplateCycle';
 import { ASSETS } from '../../utils/constants';
 import { AnimatePresence } from 'framer-motion';
+import { useActiveProfile } from '../../hooks/useActiveProfile';
+import { useActiveHadist } from '../../hooks/useActiveHadist';
+import { useEffect } from 'react';
 
 export function Home() {
-  // 3 templates, switch every 30 seconds (15000 ms)
+  // 3 templates, switch every 15 seconds (15000 ms)
   const templateIndex = useTemplateCycle(3, 15000);
 
+  // Fetch active profile
+  const { activeProfile } = useActiveProfile();
+  const { activeHadist, refetch: refetchHadist } = useActiveHadist();
+
+  useEffect(() => {
+    if (templateIndex === 1) {
+      refetchHadist();
+    }
+  }, [templateIndex, refetchHadist])
+
   return (
-    <div 
+    <div
       className="relative w-screen h-screen flex flex-col overflow-hidden bg-brand-bg-primary text-brand-secondary"
     >
       {/* Background Image Global (Islamic Pattern) */}
-      <div 
+      <div
         className="absolute inset-0 z-0 bg-repeat opacity-25"
         style={{ backgroundImage: `url(${ASSETS.background})`, backgroundSize: '400px' }}
       />
 
       {/* Top Header */}
       <div className="relative z-10 flex-none w-full">
-        <Header />
+        <Header activeProfile={activeProfile} />
       </div>
 
       {/* Main Body */}
       <div className="relative z-10 flex-1 flex flex-row overflow-hidden w-full max-w-[1920px] mx-auto px-10 py-6 gap-10">
-        
+
         {/* Kolom Kiri: Sidebar Jam & Jadwal Sholat */}
         <div className="w-[380px] flex-none h-full">
           <PrayerSidebar />
@@ -43,7 +56,7 @@ export function Home() {
             <AnimatePresence mode="wait">
               {templateIndex === 0 && <TemplateKeuangan key="keuangan" />}
               {templateIndex === 1 && <TemplateKhotib key="khotib" />}
-              {templateIndex === 2 && <TemplateHadist key="hadist" />}
+              {templateIndex === 2 && <TemplateHadist key="hadist" activeHadist={activeHadist} />}
             </AnimatePresence>
           </div>
         </div>
@@ -52,7 +65,7 @@ export function Home() {
 
       {/* Bottom Footer Marquee */}
       <div className="relative z-20 flex-none w-full">
-        <FooterMarquee />
+        <FooterMarquee activeProfile={activeProfile} />
       </div>
 
     </div>

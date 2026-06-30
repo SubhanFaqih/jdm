@@ -6,6 +6,7 @@ import { Modal } from '../../../components/common/Modal';
 import { Input } from '../../../components/common/Input';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { kasService, programDonasiService } from '../../../services/baseCrudService';
+import { Toggle } from '../../../components/common/Toggle';
 
 const formatRupiah = (angka) => {
   return new Intl.NumberFormat('id-ID', {
@@ -57,16 +58,21 @@ export function KasPage() {
     }
   });
 
-  // Create & Update Mutation
   const saveMutation = useMutation({
     mutationFn: async (formData) => {
-      const data = Object.fromEntries(formData.entries());
-      data.nominal = Number(data.nominal);
+      const payload = {
+        tipe: formData.get('tipe'),
+        nominal: Number(formData.get('nominal')),
+        keterangan: formData.get('keterangan'),
+        tanggal: formData.get('tanggal'),
+        program_donasi_id: formData.get('program_donasi_id') || '',
+        isHidden: formData.has('isHidden')
+      };
       
       if (editingData) {
-        return await kasService.update(editingData.id, data);
+        return await kasService.update(editingData.id, payload);
       }
-      return await kasService.create(data);
+      return await kasService.create(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['kasLogs'] });
@@ -154,6 +160,15 @@ export function KasPage() {
       key: 'nominal', 
       label: 'Jumlah',
       render: (row) => formatRupiah((row.nominal || 0) / 100)
+    },
+    {
+      key: 'isHidden',
+      label: 'Status Layar',
+      render: (row) => (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${row.isHidden ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
+          {row.isHidden ? 'Sembunyi' : 'Tampil'}
+        </span>
+      )
     },
     {
       key: 'aksi',
@@ -293,6 +308,15 @@ export function KasPage() {
             defaultValue={editingData ? new Date(editingData.tanggal).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
             required 
           />
+
+          <div className="pt-2">
+            <Toggle
+              id="isHidden"
+              name="isHidden"
+              label="Sembunyikan dari Layar Utama"
+              defaultChecked={editingData ? editingData.isHidden : false}
+            />
+          </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
             <Button type="button" variant="ghost" onClick={closeModal} disabled={saveMutation.isPending}>

@@ -35,6 +35,10 @@ const kasLogSchema = new mongoose.Schema({
   deletedAt: {
     type: Date,
     default: null
+  },
+  isHidden: {
+    type: Boolean,
+    default: false
   }
 }, { 
   timestamps: true 

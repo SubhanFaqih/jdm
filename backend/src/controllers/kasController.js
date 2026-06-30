@@ -50,9 +50,27 @@ export const getKasLogs = async (req, res) => {
   }
 };
 
+const enforceHiddenLimit = async (excludeId = null) => {
+  const query = { isHidden: true, isDeleted: false };
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+  const hiddenCount = await KasLog.countDocuments(query);
+  if (hiddenCount >= 5) {
+    // Find the oldest hidden records to set to false
+    const oldestRecords = await KasLog.find(query)
+      .sort({ tanggal: 1, createdAt: 1 })
+      .limit(hiddenCount - 4);
+    for (const doc of oldestRecords) {
+      doc.isHidden = false;
+      await doc.save();
+    }
+  }
+};
+
 export const createKasLog = async (req, res) => {
   try {
-    const { tipe, nominal, keterangan, tanggal, program_donasi_id } = req.body;
+    const { tipe, nominal, keterangan, tanggal, program_donasi_id, isHidden } = req.body;
 
     if (!tipe || !nominal || !keterangan) {
       return res.status(400).json({ success: false, message: "tipe, nominal, dan keterangan wajib diisi." });
@@ -64,6 +82,11 @@ export const createKasLog = async (req, res) => {
 
     if (Number(nominal) <= 0) {
       return res.status(400).json({ success: false, message: "nominal transaksi harus lebih dari 0." });
+    }
+
+    const isHiddenBool = isHidden === true || isHidden === 'true';
+    if (isHiddenBool) {
+      await enforceHiddenLimit();
     }
 
     const txDate = tanggal ? new Date(tanggal) : new Date();
@@ -83,7 +106,8 @@ export const createKasLog = async (req, res) => {
       nominal: nominalCents,
       keterangan,
       tanggal: txDate,
-      program_donasi_id: program_donasi_id || null
+      program_donasi_id: program_donasi_id || null,
+      isHidden: isHiddenBool
     });
 
     const saved = await newLog.save();
@@ -121,7 +145,7 @@ export const createKasLog = async (req, res) => {
 export const updateKasLog = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tipe, nominal, keterangan, tanggal, program_donasi_id } = req.body;
+    const { tipe, nominal, keterangan, tanggal, program_donasi_id, isHidden } = req.body;
 
     const oldLog = await KasLog.findById(id);
     if (!oldLog || oldLog.isDeleted) {
@@ -130,6 +154,11 @@ export const updateKasLog = async (req, res) => {
 
     // Save a copy of the original data BEFORE mutating the document
     const originalData = oldLog.toObject();
+
+    const isHiddenBool = isHidden === true || isHidden === 'true';
+    if (isHiddenBool && !oldLog.isHidden) {
+      await enforceHiddenLimit(oldLog._id);
+    }
 
     // Revert old summary
     await updateSummaries(oldLog.tanggal, oldLog.tipe, -oldLog.nominal);
@@ -146,6 +175,7 @@ export const updateKasLog = async (req, res) => {
     if (keterangan) oldLog.keterangan = keterangan;
     oldLog.tanggal = txDate;
     if (program_donasi_id !== undefined) oldLog.program_donasi_id = program_donasi_id || null;
+    if (isHidden !== undefined) oldLog.isHidden = isHiddenBool;
 
     const saved = await oldLog.save();
 

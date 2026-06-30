@@ -1,8 +1,6 @@
-import { RUNNING_TEXT } from '../../utils/constants';
-
-export function FooterMarquee() {
-  // Gabungkan semua teks dengan pemisah titik emas
-  const marqueeText = RUNNING_TEXT.join(' • ');
+export function FooterMarquee({ activeProfile }) {
+  // Gabungkan semua teks dengan pemisah titik emas, gunakan data dari activeProfile jika ada
+  const marqueeText = activeProfile?.running_text?.trim();
 
   return (
     <div className="w-full bg-brand-secondary text-white py-3 shadow-inner relative overflow-hidden flex items-center border-t-4 border-brand-primary">

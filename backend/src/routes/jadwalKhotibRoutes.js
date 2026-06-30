@@ -4,7 +4,8 @@ import {
   getJadwalKhotibById,
   createJadwalKhotib,
   updateJadwalKhotib,
-  deleteJadwalKhotib
+  deleteJadwalKhotib,
+  importJadwalKhotib
 } from '../controllers/jadwalKhotibController.js';
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.get('/', getJadwalKhotibList);
 
 // GET schedule by ID
 router.get('/:id', getJadwalKhotibById);
+
+// POST bulk import schedules
+router.post('/import', importJadwalKhotib);
 
 // POST create schedule assignment
 router.post('/', createJadwalKhotib);

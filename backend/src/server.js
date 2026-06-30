@@ -11,6 +11,7 @@ import programDonasiRoutes from './routes/programDonasiRoutes.js';
 import kasRoutes from './routes/kasRoutes.js';
 import profileMasjidRoutes from './routes/profileMasjidRoutes.js';
 import auditLogRoutes from './routes/auditLogRoutes.js';
+import wilayahRoutes from './routes/wilayahRoutes.js';
 import { initScheduler } from './services/schedulerService.js';
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/program-donasi", programDonasiRoutes);
 app.use("/api/kas", kasRoutes);
 app.use("/api/profile-masjid", profileMasjidRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/wilayah", wilayahRoutes);
 
 app.get('/', (req, res) => {
   res.send("Hello World");

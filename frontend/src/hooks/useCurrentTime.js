@@ -35,7 +35,7 @@ export function useCurrentTime() {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
-    }).replace('M', 'Hijriah');
+    });
   };
 
   return {

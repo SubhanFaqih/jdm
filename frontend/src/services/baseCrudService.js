@@ -93,8 +93,26 @@ export const createCrudService = (endpoint, entityName = 'data') => {
 export const ustadzService = createCrudService('/api/ustadz', 'ustadz');
 export const profileMasjidService = createCrudService('/api/profile-masjid', 'profile masjid');
 export const hadistThemeService = createCrudService('/api/hadist/themes', 'tema hadist');
-export const jadwalKhotibService = createCrudService('/api/jadwal-khotib', 'jadwal khotib');
+export const jadwalKhotibService = {
+  ...createCrudService('/api/jadwal-khotib', 'jadwal khotib'),
+  async importExcel(schedules) {
+    const res = await fetch('/api/jadwal-khotib/import', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ schedules })
+    });
+    if (!res.ok) {
+      const errorJson = await res.json().catch(() => ({}));
+      throw new Error(errorJson.message || 'Gagal meng-import jadwal dari Excel');
+    }
+    const json = await res.json();
+    return json.data;
+  }
+};
 export const programDonasiService = createCrudService('/api/program-donasi', 'program donasi');
+export const hadistAcitveService = createCrudService('/api/hadist/', 'hadist aktif');
 
 export const kasService = {
   ...createCrudService('/api/kas', 'laporan kas'),

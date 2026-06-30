@@ -18,7 +18,7 @@ const ustadzSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   }
-}, { 
+}, {
   timestamps: true // Otomatis membuat field createdAt dan updatedAt
 });
 

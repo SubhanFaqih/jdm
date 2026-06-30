@@ -106,13 +106,13 @@ export function ProgramDonasiPage() {
         <button 
           type="button"
           onClick={() => toggleMutation.mutate(row.id)}
-          disabled={toggleMutation.isPending || row.is_active}
+          disabled={toggleMutation.isPending}
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
             row.is_active 
-              ? 'bg-green-100 text-green-700 cursor-default' 
+              ? 'bg-green-100 text-green-700 hover:bg-green-200' 
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
-          title={row.is_active ? "Program Aktif" : "Klik untuk jadikan Program Aktif"}
+          title={row.is_active ? "Klik untuk menonaktifkan program" : "Klik untuk jadikan Program Aktif"}
         >
           {row.is_active ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
           {row.is_active ? 'Aktif' : 'Nonaktif'}

@@ -1,4 +1,3 @@
-import { HADIST } from '../../../utils/constants';
 import { motion } from 'framer-motion';
 
 const containerVariants = {
@@ -15,7 +14,7 @@ const itemVariants = {
   show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 80 } }
 };
 
-export function TemplateHadist() {
+export function TemplateHadist( {activeHadist} ) {
   return (
     <motion.div 
       className="w-full h-full flex flex-col items-center justify-center relative text-center min-h-[400px]"
@@ -25,12 +24,20 @@ export function TemplateHadist() {
       exit="exit"
     >
       <motion.div className="text-slate-800 px-12" variants={itemVariants}>
-        <p className="text-4xl md:text-5xl font-heading font-medium leading-relaxed mb-10 text-slate-700">
-          {HADIST.teks}
-        </p>
-        <p className="text-xl md:text-2xl font-bold text-slate-500 uppercase tracking-widest">
-          {HADIST.sumber}
-        </p>
+<div className="relative max-w-4xl mx-auto text-center my-12">
+  {/* Teks Hadis - Lebih tajam, ukuran proporsional, dan anggun */}
+  <p className="text-2xl md:text-3xl font-serif italic text-slate-800 leading-loose mb-8">
+    "{activeHadist.text}"
+  </p>
+  
+  {/* Pembatas Elegan */}
+  <div className="w-12 h-[2px] bg-emerald-500 mx-auto mb-6 rounded-full" />
+  
+  {/* Takhrij - Terlihat seperti sumber/referensi resmi */}
+  <p className="text-sm md:text-base font-medium uppercase tracking-widest">
+    {activeHadist.takhrij}
+  </p>
+</div>  
       </motion.div>
     </motion.div>
   );

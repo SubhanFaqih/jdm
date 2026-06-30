@@ -209,3 +209,117 @@ export const deleteJadwalKhotib = async (req, res) => {
     });
   }
 };
+
+/**
+ * POST /api/jadwal-khotib/import
+ * Bulk import Friday preacher schedules from parsed Excel JSON
+ */
+export const importJadwalKhotib = async (req, res) => {
+  try {
+    const { schedules } = req.body;
+
+    if (!schedules || !Array.isArray(schedules)) {
+      return res.status(400).json({
+        success: false,
+        message: "Data schedules berupa array wajib disertakan."
+      });
+    }
+
+    // 1. Fetch all ustadz for case-insensitive matching
+    const allUstadz = await Ustadz.find({});
+    
+    const results = [];
+    const errors = [];
+
+    // Loop through each schedule item from request
+    for (let i = 0; i < schedules.length; i++) {
+      const item = schedules[i];
+      const { tanggal, nama_khotib, tema } = item;
+
+      if (!tanggal || !nama_khotib) {
+        errors.push({
+          row: i + 1,
+          message: `Baris ${i + 1}: Tanggal dan Nama Khotib wajib diisi.`
+        });
+        continue;
+      }
+
+      const targetDate = new Date(tanggal);
+      if (isNaN(targetDate.getTime())) {
+        errors.push({
+          row: i + 1,
+          message: `Baris ${i + 1}: Format tanggal "${tanggal}" tidak valid. Gunakan YYYY-MM-DD.`
+        });
+        continue;
+      }
+
+      // Normalize date to midnight UTC to ensure consistency
+      targetDate.setUTCHours(0, 0, 0, 0);
+
+      // Check if preacher exists (case-insensitive)
+      const cleanName = nama_khotib.trim();
+      let matchedUstadz = allUstadz.find(
+        (u) => u.nama.toLowerCase() === cleanName.toLowerCase()
+      );
+
+      let ustadzId;
+      if (matchedUstadz) {
+        ustadzId = matchedUstadz._id;
+      } else {
+        // Create new Ustadz if not found in DB
+        try {
+          const newUstadz = new Ustadz({
+            nama: cleanName
+          });
+          const savedUstadz = await newUstadz.save();
+          // Add to local list to prevent duplicate creation if same ustadz appears again in the array
+          allUstadz.push(savedUstadz);
+          ustadzId = savedUstadz._id;
+        } catch (err) {
+          errors.push({
+            row: i + 1,
+            message: `Baris ${i + 1}: Gagal membuat master data Ustadz "${cleanName}".`
+          });
+          continue;
+        }
+      }
+
+      // Upsert Jadwal Khotib for this date
+      try {
+        const updatedSchedule = await JadwalKhotib.findOneAndUpdate(
+          { tanggal: targetDate },
+          { ustadz_id: ustadzId, tema: tema || "" },
+          { upsert: true, new: true }
+        ).populate('ustadz_id');
+        
+        results.push(updatedSchedule);
+      } catch (err) {
+        errors.push({
+          row: i + 1,
+          message: `Baris ${i + 1}: Gagal menyimpan jadwal khotib untuk tanggal ${tanggal}.`
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: errors.length === 0,
+      message: errors.length === 0 
+        ? "Semua jadwal berhasil di-import." 
+        : `Berhasil meng-import ${results.length} jadwal, ${errors.length} baris gagal.`,
+      data: {
+        importedCount: results.length,
+        errorsCount: errors.length,
+        errors,
+        results
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in importJadwalKhotib:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Gagal memproses import jadwal khotib.",
+      error: error.message
+    });
+  }
+};

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import { jwsService, profileMasjidService } from '../services/baseCrudService';
+import { jwsService } from '../services/baseCrudService';
+import { useActiveProfile } from './useActiveProfile';
 
 export function useJwsData() {
   const getTodayStr = () => {
@@ -22,13 +23,8 @@ export function useJwsData() {
     return () => clearInterval(interval);
   }, [todayStr]);
 
-  // Fetch profiles to get the active one
-  const { data: profiles = [] } = useQuery({
-    queryKey: ['profileMasjid'],
-    queryFn: async () => await profileMasjidService.getAll()
-  });
-
-  const activeProfile = profiles.find(p => p.is_active);
+  // Fetch active profile
+  const { activeProfile } = useActiveProfile();
   const kota = activeProfile ? activeProfile.kota : 'Memuat...';
 
   // Fetch JWS
