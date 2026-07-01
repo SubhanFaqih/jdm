@@ -1,5 +1,4 @@
-import { use } from 'react';
-import { ThemeContext } from '../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeProvider';
 import { Sun, Moon, Bell } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,7 +13,7 @@ const routeTitles = {
 };
 
 export function AdminHeader() {
-  const { isDark, toggleTheme } = use(ThemeContext);
+  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const title = routeTitles[location.pathname] || 'Admin Panel';
 

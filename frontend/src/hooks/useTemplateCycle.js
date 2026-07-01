@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
  * @param {number} totalTemplates - Total number of templates to cycle through.
  * @param {number} intervalMs - Interval in milliseconds.
  */
-export function useTemplateCycle(totalTemplates, intervalMs = 30000) {
+export function useTemplateCycle(totalTemplates, intervalMs = 15000) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const kasLogSchema = new mongoose.Schema({
   kasId: {
@@ -46,5 +47,7 @@ const kasLogSchema = new mongoose.Schema({
 
 kasLogSchema.index({ tanggal: -1 });
 kasLogSchema.index({ isDeleted: 1 });
+
+kasLogSchema.plugin(mongooseSocketPlugin, { modelName: 'kas' });
 
 export default mongoose.model('KasLog', kasLogSchema);

@@ -52,7 +52,7 @@ export function UstadzPage() {
 
       // Kirim formData asli agar file ikut terkirim sebagai multipart/form-data
       if (id) {
-        return await ustadzService.update(id, formData);
+        return await ustadzService.update(id, formData);  
       } else {
         // Hapus 'id' yang kosong agar tidak terkirim saat create
         if (!id) formData.delete('id');

@@ -5,7 +5,7 @@ import { Button } from '../../../components/common/Button';
 import { Modal } from '../../../components/common/Modal';
 import { Input } from '../../../components/common/Input';
 import { Table } from '../../../components/common/Table';
-import { Plus, Edit2, Trash2, Upload, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Upload, AlertCircle, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 export function JadwalKhotibPage() {
@@ -126,6 +126,27 @@ export function JadwalKhotibPage() {
       return date.toISOString().split('T')[0];
     }
     return dateStr;
+  };
+
+  const handleDownloadTemplate = () => {
+    const headers = [['Tanggal', 'Nama Khotib', 'Tema']];
+    const sampleData = [
+      ['2026-07-03', 'Ustadz KH. Ahmad Bukhari', 'Keutamaan Sholat Jumat'],
+      ['2026-07-10', 'Ustadz Yusuf Mansur', 'Kunci Keberkahan Rezeki'],
+      ['2026-07-17', 'Ustadz Adi Hidayat', 'Membangun Keluarga Sakinah']
+    ];
+    
+    const worksheetData = [...headers, ...sampleData];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    
+    // Auto-fit column widths
+    const maxLens = [15, 30, 35];
+    worksheet['!cols'] = maxLens.map(w => ({ wch: w }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Template Jadwal Khotib');
+    
+    XLSX.writeFile(workbook, 'template_jadwal_khotib.xlsx');
   };
 
   const handleFileUpload = (e) => {
@@ -285,6 +306,10 @@ export function JadwalKhotibPage() {
             accept=".xlsx, .xls" 
             className="hidden" 
           />
+          <Button variant="outline" onClick={handleDownloadTemplate} className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Download Template
+          </Button>
           <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2">
             <Upload className="w-4 h-4" />
             Import Excel

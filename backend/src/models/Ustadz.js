@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const ustadzSchema = new mongoose.Schema({
   nama: {
@@ -21,5 +22,7 @@ const ustadzSchema = new mongoose.Schema({
 }, {
   timestamps: true // Otomatis membuat field createdAt dan updatedAt
 });
+
+ustadzSchema.plugin(mongooseSocketPlugin, { modelName: 'ustadz' });
 
 export default mongoose.model('Ustadz', ustadzSchema);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const prayerScheduleSchema = new mongoose.Schema({
   provinsi: { type: String, required: true },
@@ -26,5 +27,7 @@ const prayerScheduleSchema = new mongoose.Schema({
 // KUNCI PERFORMA: Compound Index + Unique Constraint
 // Memastikan tidak ada data ganda untuk kota yang sama di tanggal yang sama
 prayerScheduleSchema.index({ kabkota: 1, tanggal_lengkap: 1 }, { unique: true });
+
+prayerScheduleSchema.plugin(mongooseSocketPlugin, { modelName: 'jws' });
 
 export default mongoose.model('PrayerSchedule', prayerScheduleSchema);

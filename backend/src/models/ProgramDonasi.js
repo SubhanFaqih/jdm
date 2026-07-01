@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const programDonasiSchema = new mongoose.Schema({
   nama_program: {
@@ -36,5 +37,7 @@ programDonasiSchema.virtual('kekurangan_dana').get(function() {
 // Pastikan virtual field ikut dikirim ke frontend
 programDonasiSchema.set('toJSON', { virtuals: true });
 programDonasiSchema.set('toObject', { virtuals: true });
+
+programDonasiSchema.plugin(mongooseSocketPlugin, { modelName: 'donasi' });
 
 export default mongoose.model('ProgramDonasi', programDonasiSchema);

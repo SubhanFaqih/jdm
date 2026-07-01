@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const hadistSchema = new mongoose.Schema({
   keyword: { type: String, required: true, index: true }, // Tema/kata kunci pencarian (e.g., "kiamat", "puasa")
@@ -13,5 +14,7 @@ const hadistSchema = new mongoose.Schema({
 // KUNCI PERFORMA & INTEGRITAS DATA:
 // Mencegah penyimpanan hadis dengan ID yang sama di bawah kata kunci (keyword) yang sama
 hadistSchema.index({ keyword: 1, hadistId: 1 }, { unique: true });
+
+hadistSchema.plugin(mongooseSocketPlugin, { modelName: 'hadist' });
 
 export default mongoose.model('Hadist', hadistSchema);

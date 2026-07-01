@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const jadwalKhotibSchema = new mongoose.Schema({
   tanggal: {
@@ -18,5 +19,7 @@ const jadwalKhotibSchema = new mongoose.Schema({
 }, { 
   timestamps: true 
 });
+
+jadwalKhotibSchema.plugin(mongooseSocketPlugin, { modelName: 'jadwal-khotib' });
 
 export default mongoose.model('JadwalKhotib', jadwalKhotibSchema);

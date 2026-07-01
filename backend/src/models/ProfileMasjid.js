@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { mongooseSocketPlugin } from '../config/mongooseSocketPlugin.js';
 
 const profileMasjidSchema = new mongoose.Schema({
   nama_masjid: {
@@ -42,5 +43,7 @@ const profileMasjidSchema = new mongoose.Schema({
 }, { 
   timestamps: true 
 });
+
+profileMasjidSchema.plugin(mongooseSocketPlugin, { modelName: 'profile-masjid' });
 
 export default mongoose.model('ProfileMasjid', profileMasjidSchema);
