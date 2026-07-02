@@ -7,25 +7,26 @@ import {
   deleteProgramDonasi,
   toggleActiveDonasi
 } from '../controllers/programDonasiController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// GET all programs
+// GET all programs (public)
 router.get('/', getProgramDonasiList);
 
-// GET program by ID
-router.get('/:id', getProgramDonasiById);
+// GET program by ID (admin-only)
+router.get('/:id', protect, getProgramDonasiById);
 
-// POST create program
-router.post('/', createProgramDonasi);
+// POST create program (admin-only)
+router.post('/', protect, createProgramDonasi);
 
-// PUT update program by ID
-router.put('/:id', updateProgramDonasi);
+// PUT update program by ID (admin-only)
+router.put('/:id', protect, updateProgramDonasi);
 
-// PATCH toggle active
-router.patch('/:id/toggle-active', toggleActiveDonasi);
+// PATCH toggle active (admin-only)
+router.patch('/:id/toggle-active', protect, toggleActiveDonasi);
 
-// DELETE program by ID
-router.delete('/:id', deleteProgramDonasi);
+// DELETE program by ID (admin-only)
+router.delete('/:id', protect, deleteProgramDonasi);
 
 export default router;

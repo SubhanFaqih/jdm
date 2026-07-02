@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { Home } from '../pages/Home';
 import { AdminLayout } from '../components/layout/AdminLayout';
+import { ProtectedRoute } from '../components/layout/ProtectedRoute';
+import { LoginPage } from '../pages/Login';
 
 // Admin Pages
 import { Dashboard } from '../pages/Admin/Dashboard';
@@ -18,8 +20,11 @@ export function AppRoutes() {
       {/* Public / Digital Signage */}
       <Route path="/" element={<Home />} />
 
-      {/* Admin Panel */}
-      <Route path="/admin" element={<AdminLayout />}>
+      {/* Login Admin */}
+      <Route path="/admin/login" element={<LoginPage />} />
+
+      {/* Admin Panel (Protected) */}
+      <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
         <Route path="ustadz" element={<UstadzPage />} />
         <Route path="khotib" element={<JadwalKhotibPage />} />

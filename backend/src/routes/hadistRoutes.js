@@ -8,6 +8,7 @@ import {
   updateTheme,
   deleteTheme,
 } from "../controllers/hadistController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -15,13 +16,13 @@ const router = express.Router();
 router.get("/", getDailyHadist);
 
 // Route to sync 20 random hadiths for a theme from external API to local DB
-router.post("/sync", syncExternalHadist);
+router.post("/sync", protect, syncExternalHadist);
 
 // Routes to manage hadith themes
-router.get("/themes", getThemes);
-router.get("/themes/:id", getThemeById);
-router.post("/themes", createTheme);
-router.put("/themes/:id", updateTheme);
-router.delete("/themes/:id", deleteTheme);
+router.get("/themes", protect, getThemes);
+router.get("/themes/:id", protect, getThemeById);
+router.post("/themes", protect, createTheme);
+router.put("/themes/:id", protect, updateTheme);
+router.delete("/themes/:id", protect, deleteTheme);
 
 export default router;

@@ -1,0 +1,16 @@
+➜  backend git:(main) ✗ node src/seeders/admin.js admin admin123 "Masjid Administrator"
+
+◇ injected env (3) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Menghubungkan ke MongoDB...
+MongoDB Connected: localhost
+Memeriksa apakah user "admin" sudah ada...
+Membuat akun admin baru...
+Terjadi kesalahan saat seeding: TypeError: next is not a function
+    at model.<anonymous> (file:///home/tatsuya/jdm/backend/src/models/User.js:40:5)
+    at async Kareem.execPre (/home/tatsuya/jdm/backend/node_modules/kareem/index.js:61:24)
+    at async model.$__save (/home/tatsuya/jdm/backend/node_modules/mongoose/lib/model.js:403:5)
+    at async maybeTracedSave (/home/tatsuya/jdm/backend/node_modules/mongoose/lib/model.js:675:7)
+    at async seedAdmin (file:///home/tatsuya/jdm/backend/src/seeders/admin.js:40:5)
+➜  backend git:(main) ✗ 
+
+jelaskan di mana JWT_SECRET=supersecretkeyjdm123!@# di pake, dan kenapa ga di buat kaya random string gitu biar sudah di bruteforce?

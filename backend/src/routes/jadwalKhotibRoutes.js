@@ -7,25 +7,26 @@ import {
   deleteJadwalKhotib,
   importJadwalKhotib
 } from '../controllers/jadwalKhotibController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// GET all schedules
+// GET all schedules (public)
 router.get('/', getJadwalKhotibList);
 
-// GET schedule by ID
-router.get('/:id', getJadwalKhotibById);
+// GET schedule by ID (admin-only)
+router.get('/:id', protect, getJadwalKhotibById);
 
-// POST bulk import schedules
-router.post('/import', importJadwalKhotib);
+// POST bulk import schedules (admin-only)
+router.post('/import', protect, importJadwalKhotib);
 
-// POST create schedule assignment
-router.post('/', createJadwalKhotib);
+// POST create schedule assignment (admin-only)
+router.post('/', protect, createJadwalKhotib);
 
-// PUT update schedule by ID
-router.put('/:id', updateJadwalKhotib);
+// PUT update schedule by ID (admin-only)
+router.put('/:id', protect, updateJadwalKhotib);
 
-// DELETE schedule by ID
-router.delete('/:id', deleteJadwalKhotib);
+// DELETE schedule by ID (admin-only)
+router.delete('/:id', protect, deleteJadwalKhotib);
 
 export default router;

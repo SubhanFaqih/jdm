@@ -1,6 +1,7 @@
 import { useTheme } from '../../context/ThemeProvider';
-import { Sun, Moon, Bell } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { Sun, Moon, Bell, LogOut } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const routeTitles = {
   '/admin': 'Dashboard Overview',
@@ -10,12 +11,24 @@ const routeTitles = {
   '/admin/kas': 'Laporan Kas Masjid',
   '/admin/profile': 'Profile & Pengaturan Masjid',
   '/admin/hadist': 'Manajemen Hadist Harian',
+  '/admin/audit-logs': 'Log Audit Sistem'
 };
 
 export function AdminHeader() {
   const { isDark, toggleTheme } = useTheme();
+  const { logout, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const title = routeTitles[location.pathname] || 'Admin Panel';
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/admin/login', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 transition-colors duration-200">
@@ -41,6 +54,25 @@ export function AdminHeader() {
         >
           {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
+
+        {user && (
+          <>
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                {user.name}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-850"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </header>
   );

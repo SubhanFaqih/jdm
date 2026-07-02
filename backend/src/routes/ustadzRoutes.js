@@ -8,8 +8,11 @@ import {
 } from '../controllers/ustadzController.js';
 
 import { upload } from '../middlewares/uploadMiddleware.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
+
+router.use(protect);
 
 // GET all preachers
 router.get('/', getUstadzList);

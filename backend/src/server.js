@@ -13,8 +13,10 @@ import kasRoutes from './routes/kasRoutes.js';
 import profileMasjidRoutes from './routes/profileMasjidRoutes.js';
 import auditLogRoutes from './routes/auditLogRoutes.js';
 import wilayahRoutes from './routes/wilayahRoutes.js';
+import cookieParser from 'cookie-parser';
 import { initScheduler } from './services/schedulerService.js';
 import { initSocket } from './services/socketService.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -31,9 +33,12 @@ await connectDB();
 initScheduler();
 
 app.use(express.json());
+app.use(cookieParser()); // Parsing cookies
+
 // Expose the public/uploads directory
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
+app.use("/api/auth", authRoutes);
 app.use("/api/jws", jwsRoutes);
 app.use("/api/hadist", hadistRoutes);
 app.use("/api/ustadz", ustadzRoutes);
