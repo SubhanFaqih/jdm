@@ -5,11 +5,15 @@
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
   
-  --color-brand-primary: #D97706; /* Amber 600 - Emas hangat */
+  --color-brand-primary: #D97706; /* Amber 600 - Emas hangat (Jam Masjid) */
   --color-brand-secondary: #064E3B; /* Emerald 900 - Hijau gelap */
   --color-brand-bg-primary: #F9FAFB; /* Slate 50 - Latar Belakang */
   --color-brand-bg-secondary: #ffffff; /* White */
   --color-brand-border: #E5E7EB; /* slate-200 border */
+}
+
+.admin-theme {
+  --color-brand-primary: #2563EB; /* Blue 600 - Biru premium (Admin Panel) */
 }
 
 @custom-variant dark (&:is(.dark *));

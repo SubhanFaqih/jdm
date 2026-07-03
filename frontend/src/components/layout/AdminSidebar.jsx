@@ -62,7 +62,7 @@ export function AdminSidebar() {
       {/* Brand / Logo Area */}
       <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800">
         <h1 className="text-xl font-bold font-heading text-brand-primary">
-          Masjid Admin
+          Admin Panel
         </h1>
       </div>
 

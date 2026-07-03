@@ -4,7 +4,7 @@ import { AdminHeader } from './AdminHeader';
 
 export function AdminLayout() {
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-brand-bg-primary text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="admin-theme flex h-screen w-screen overflow-hidden bg-brand-bg-primary text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Sidebar */}
       <AdminSidebar />
       

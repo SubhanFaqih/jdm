@@ -1,25 +1,15 @@
 import { useTheme } from '../../context/ThemeProvider';
 import { useAuth } from '../../context/AuthContext';
 import { Sun, Moon, Bell, LogOut } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-const routeTitles = {
-  '/admin': 'Dashboard Overview',
-  '/admin/ustadz': 'Manajemen Ustadz',
-  '/admin/khotib': 'Jadwal Khotib Jumat',
-  '/admin/donasi': 'Program Donasi',
-  '/admin/kas': 'Laporan Kas Masjid',
-  '/admin/profile': 'Profile & Pengaturan Masjid',
-  '/admin/hadist': 'Manajemen Hadist Harian',
-  '/admin/audit-logs': 'Log Audit Sistem'
-};
+import { useNavigate } from 'react-router-dom';
+import { useActiveProfile } from '../../hooks/useActiveProfile';
 
 export function AdminHeader() {
   const { isDark, toggleTheme } = useTheme();
   const { logout, user } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
-  const title = routeTitles[location.pathname] || 'Admin Panel';
+  const { activeProfile } = useActiveProfile();
+  const title = activeProfile?.nama_masjid || 'Admin Panel';
 
   const handleLogout = async () => {
     try {
