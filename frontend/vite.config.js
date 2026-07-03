@@ -11,15 +11,15 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.BACKEND_URL || 'http://localhost:5000',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: process.env.BACKEND_URL || 'http://localhost:5000',
         changeOrigin: true,
       },
       '/socket.io': {
-        target: 'http://localhost:5000',
+        target: process.env.BACKEND_URL || 'http://localhost:5000',
         ws: true,
       }
     },
