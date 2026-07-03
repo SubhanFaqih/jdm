@@ -49,6 +49,11 @@ export function AuditLogPage() {
         return kasId ? `TRX-${kasId}` : row.documentId;
       }
     },
+    {
+      key: 'userId',
+      label: 'Pengguna',
+      render: (row) => row.userId?.name || 'Unknown'
+    },
     { 
       key: 'details', 
       label: 'Detail Perubahan',

@@ -3,7 +3,7 @@ import AuditLog from '../models/AuditLog.js';
 export const getAuditLogs = async (req, res) => {
   try {
     // Only fetch the last 100 logs to keep it light
-    const logs = await AuditLog.find().sort({ performedAt: -1 }).limit(100);
+    const logs = await AuditLog.find().populate('userId', 'name username').sort({ performedAt: -1 }).limit(100);
     res.status(200).json({
       success: true,
       data: logs

@@ -128,6 +128,7 @@ export const createKasLog = async (req, res) => {
       action: 'CREATE',
       collectionName: 'KasLogs',
       documentId: saved._id,
+      userId: req.user._id,
       newData: saved.toObject()
     });
 
@@ -211,6 +212,7 @@ export const updateKasLog = async (req, res) => {
       action: 'UPDATE',
       collectionName: 'KasLogs',
       documentId: saved._id,
+      userId: req.user._id,
       oldData: originalData,
       newData: saved.toObject()
     });
@@ -252,6 +254,7 @@ export const deleteKasLog = async (req, res) => {
       action: 'DELETE',
       collectionName: 'KasLogs',
       documentId: oldLog._id,
+      userId: req.user._id,
       oldData: oldLog.toObject()
     });
 

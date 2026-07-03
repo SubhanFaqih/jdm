@@ -38,7 +38,7 @@ export function AuditLogModal({ isOpen, onClose, log }) {
       maxWidth="max-w-[95%] md:max-w-[70%]"
     >
       <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
             <span className="font-semibold text-slate-500">Aksi:</span>
             <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -52,6 +52,12 @@ export function AuditLogModal({ isOpen, onClose, log }) {
           <div>
             <span className="font-semibold text-slate-500">Koleksi:</span>
             <span className="ml-2 font-medium">{log.collectionName}</span>
+          </div>
+          <div>
+            <span className="font-semibold text-slate-500">Pengguna:</span>
+            <span className="ml-2 font-medium text-slate-700 dark:text-slate-300">
+              {log.userId?.name || 'Unknown'}
+            </span>
           </div>
         </div>
 
