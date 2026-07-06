@@ -1,28 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
 import { jwsService } from '../services/baseCrudService';
 import { useActiveProfile } from './useActiveProfile';
+import { useTime } from '../context/TimeContext';
 
 export function useJwsData() {
-  const getTodayStr = () => {
-    const d = new Date();
-    const pad = (n) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  };
-
-  const [todayStr, setTodayStr] = useState(getTodayStr());
-
-  useEffect(() => {
-    // Check every minute if the day has changed to automatically fetch new data without refreshing
-    const interval = setInterval(() => {
-      const newTodayStr = getTodayStr();
-      if (newTodayStr !== todayStr) {
-        setTodayStr(newTodayStr);
-      }
-    }, 1000 * 60);
-    return () => clearInterval(interval);
-  }, [todayStr]);
-
+  const { todayStr } = useTime();
+  
   // Fetch active profile
   const { activeProfile } = useActiveProfile();
   const kota = activeProfile ? activeProfile.kota : 'Memuat...';

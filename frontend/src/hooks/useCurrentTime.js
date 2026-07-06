@@ -1,46 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useTime } from '../context/TimeContext';
 
 /**
  * Custom hook to get the current real-time clock and formatted dates.
+ * Refactored to use the centralized TimeContext instead of an internal interval.
  */
 export function useCurrentTime() {
-  const [time, setTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (date) => {
-    return date.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).replace(/\./g, ':');
-  };
-
-  const formatDateGregorian = (date) => {
-    return date.toLocaleDateString('id-ID', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
-
-  // Very basic hijri formatter (for actual production, use a specialized library)
-  const formatDateHijri = (date) => {
-    return date.toLocaleDateString('id-ID-u-ca-islamic', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
+  const { timeString, dateStringGregorian, dateStringHijri } = useTime();
 
   return {
-    timeString: formatTime(time),
-    dateStringGregorian: formatDateGregorian(time),
-    dateStringHijri: formatDateHijri(time),
+    timeString,
+    dateStringGregorian,
+    dateStringHijri,
   };
 }
