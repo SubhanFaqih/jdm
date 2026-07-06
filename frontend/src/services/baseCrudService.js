@@ -40,9 +40,15 @@ export const createCrudService = (endpoint, entityName = 'data') => {
         headers: isFormData ? {} : { 'Content-Type': 'application/json' },
         body: isFormData ? data : JSON.stringify(data),
       });
-      if (!res.ok) throw new Error(`Gagal menyimpan ${entityName}`);
-      const json = await res.json();
-      if (!json.success) throw new Error(json.message || `Gagal menyimpan ${entityName}`);
+      let json;
+      try {
+        json = await res.json();
+      } catch (err) {
+        throw new Error(`Gagal menyimpan ${entityName}`);
+      }
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || `Gagal menyimpan ${entityName}`);
+      }
       return json.data;
     },
 
@@ -56,9 +62,15 @@ export const createCrudService = (endpoint, entityName = 'data') => {
         headers: isFormData ? {} : { 'Content-Type': 'application/json' },
         body: isFormData ? data : JSON.stringify(data),
       });
-      if (!res.ok) throw new Error(`Gagal mengubah ${entityName}`);
-      const json = await res.json();
-      if (!json.success) throw new Error(json.message || `Gagal mengubah ${entityName}`);
+      let json;
+      try {
+        json = await res.json();
+      } catch (err) {
+        throw new Error(`Gagal mengubah ${entityName}`);
+      }
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || `Gagal mengubah ${entityName}`);
+      }
       return json.data;
     },
 

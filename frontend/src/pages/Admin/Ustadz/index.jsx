@@ -79,10 +79,13 @@ export function UstadzPage() {
     }
   });
 
+  const [shouldDeletePhoto, setShouldDeletePhoto] = useState(false);
+
   const handleOpenForm = (item) => {
     setEditingItem(item);
     setCroppedImageFile(null);
     setCroppedImagePreview(null);
+    setShouldDeletePhoto(false);
     setIsModalOpen(true);
   };
 
@@ -91,6 +94,7 @@ export function UstadzPage() {
     setEditingItem(null);
     setCroppedImageFile(null);
     setCroppedImagePreview(null);
+    setShouldDeletePhoto(false);
   };
 
   const handleSubmit = (e) => {
@@ -98,6 +102,10 @@ export function UstadzPage() {
     const formData = new FormData(e.target);
     if (croppedImageFile) {
       formData.set('foto_url', croppedImageFile, 'ustadz_foto.png');
+    } else if (shouldDeletePhoto) {
+      formData.set('foto_url', '');
+    } else {
+      formData.delete('foto_url');
     }
     saveMutation.mutate(formData);
   };
@@ -224,16 +232,38 @@ export function UstadzPage() {
                   Hapus / Ganti
                 </button>
               </div>
-            ) : editingItem?.foto_url ? (
+            ) : (editingItem?.foto_url && !shouldDeletePhoto) ? (
               <div className="flex items-center gap-4 mt-2">
                 <img 
                   src={editingItem.foto_url} 
                   alt="Foto Saat Ini" 
                   className="w-16 h-16 object-cover rounded-full border border-slate-200" 
                 />
-                <p className="text-xs text-slate-500">
-                  Foto saat ini. Unggah file baru untuk menggantinya.
+                <div className="flex flex-col gap-1 items-start">
+                  <p className="text-xs text-slate-500">
+                    Foto saat ini. Unggah file baru untuk menggantinya.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShouldDeletePhoto(true)}
+                    className="text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer"
+                  >
+                    Hapus Foto Sekarang
+                  </button>
+                </div>
+              </div>
+            ) : shouldDeletePhoto ? (
+              <div className="flex items-center justify-between mt-2 bg-red-50 dark:bg-red-950/20 p-2.5 rounded-lg border border-red-200 dark:border-red-900/30">
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium">
+                  Foto saat ini akan dihapus setelah disimpan.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setShouldDeletePhoto(false)}
+                  className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium underline cursor-pointer"
+                >
+                  Batal Hapus
+                </button>
               </div>
             ) : null}
           </div>

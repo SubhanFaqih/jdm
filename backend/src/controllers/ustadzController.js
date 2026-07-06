@@ -67,7 +67,7 @@ export const getUstadzById = async (req, res) => {
 export const createUstadz = async (req, res) => {
   try {
     const { nama, no_hp, is_active } = req.body;
-    let foto_url = req.body.foto_url || 'https://example.com/images/default-avatar.jpg';
+    let foto_url = req.body.foto_url || '';
 
     if (req.file) {
       foto_url = `/uploads/${req.file.filename}`;

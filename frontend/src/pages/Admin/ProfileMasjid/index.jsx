@@ -208,6 +208,8 @@ export function ProfileMasjidPage() {
     const formData = new FormData(e.target);
     if (croppedImageFile) {
       formData.set('logo_url', croppedImageFile, 'logo.png');
+    } else {
+      formData.delete('logo_url');
     }
     saveMutation.mutate(formData);
   }

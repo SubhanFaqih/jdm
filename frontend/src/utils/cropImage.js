@@ -22,11 +22,22 @@ export async function getCroppedImg(imageSrc, pixelCrop) {
     return null;
   }
 
-  // Set ukuran canvas sesuai hasil crop
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  // Batasi ukuran maksimal gambar hasil crop untuk menghemat memori dan storage
+  const MAX_SIZE = 800;
+  let targetWidth = pixelCrop.width;
+  let targetHeight = pixelCrop.height;
 
-  // Gambar bagian dari gambar asal ke canvas
+  if (targetWidth > MAX_SIZE || targetHeight > MAX_SIZE) {
+    const scale = Math.min(MAX_SIZE / targetWidth, MAX_SIZE / targetHeight);
+    targetWidth = Math.round(targetWidth * scale);
+    targetHeight = Math.round(targetHeight * scale);
+  }
+
+  // Set ukuran canvas sesuai hasil scale
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+
+  // Gambar bagian dari gambar asal ke canvas dengan scaling
   ctx.drawImage(
     image,
     pixelCrop.x,
@@ -35,8 +46,8 @@ export async function getCroppedImg(imageSrc, pixelCrop) {
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    targetWidth,
+    targetHeight
   );
 
   // Mengubah canvas menjadi Blob (File Image)

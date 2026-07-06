@@ -9,7 +9,7 @@ const ustadzSchema = new mongoose.Schema({
   },
   foto_url: {
     type: String,
-    default: 'https://example.com/images/default-avatar.jpg' // URL foto default jika admin tidak upload
+    default: '' // URL foto default kosong
   },
   no_hp: {
     type: String,
