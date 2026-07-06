@@ -29,7 +29,7 @@ export function ProfileMasjidTable({
       render: (row) => (
         <button
           type="button"
-          onClick={() => onToggleActive(row.id)}
+          onClick={() => onToggleActive(row._id || row.id)}
           disabled={isTogglePending || row.is_active}
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
             row.is_active
@@ -57,7 +57,7 @@ export function ProfileMasjidTable({
       <Button
         variant="ghost"
         className="px-2"
-        onClick={() => onDelete(row.id)}
+        onClick={() => onDelete(row._id || row.id)}
         disabled={isDeletePending}
       >
         <Trash2 className="w-4 h-4 text-red-500" />
