@@ -85,11 +85,15 @@ This is the fastest method to get up and running, as it encapsulates all depende
    git clone https://github.com/SubhanFaqih/jdm.git
    cd jdm
    ```
-2. **Run Docker Compose:**
+2. **Create a `.env` file in the `backend/` directory by copying `.env.example` and configuring the environment variables:**
+   ```bash
+   cp .env.example .env
+   ```
+3. **Run Docker Compose:**
    ```bash
    docker compose up -d --build
    ```
-3. The services will be accessible at:
+4. The services will be accessible at:
    - **Frontend:** [http://localhost:5173](http://localhost:5173)
    - **Backend:** [http://localhost:5000](http://localhost:5000)
    - **MongoDB:** `mongodb://localhost:27017`
@@ -105,11 +109,9 @@ Use this option if you want to develop and run the code locally outside of Docke
    cd backend
    npm install
    ```
-2. Create a `.env` file in the `backend/` directory and configure the environment variables:
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb://admin:password@localhost:27017/jdm?authSource=admin
-   JWT_SECRET=supersecretkeyjdm123!@#
+2. Create a `.env` file in the `backend/` directory by copying `.env.example` and configuring the environment variables:
+   ```bash
+   cp .env.example .env
    ```
 3. Start the backend server in development mode (using nodemon):
    ```bash
@@ -158,14 +160,14 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 ### 1. Authentication (`/api/auth`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **POST** | `/api/auth/login` | Log in the administrator and set HttpOnly JWT cookie | ❌ Public |
-| **POST** | `/api/auth/logout` | Log out the administrator and clear the session cookie | ❌ Public |
+| **POST** | `/api/auth/login` | Log in the administrator and set HttpOnly JWT cookie | ✅ Public |
+| **POST** | `/api/auth/logout` | Log out the administrator and clear the session cookie | ✅ Public |
 | **GET** | `/api/auth/me` | Retrieve current logged-in user profile details | 🔐 Private |
 
 ### 2. Mosque Profile (`/api/profile-masjid`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/profile-masjid` | Get the currently active mosque profile | ❌ Public |
+| **GET** | `/api/profile-masjid` | Get the currently active mosque profile | ✅ Public |
 | **GET** | `/api/profile-masjid/:id` | Get mosque profile details by ID | 🔐 Private |
 | **POST** | `/api/profile-masjid` | Create a new mosque profile (supports logo upload via multipart `logo_url`) | 🔐 Private |
 | **PUT** | `/api/profile-masjid/:id` | Update mosque profile details by ID (supports logo upload) | 🔐 Private |
@@ -175,13 +177,13 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 ### 3. Prayer Schedule JWS (`/api/jws`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/jws` | Get daily or monthly prayer schedules | ❌ Public |
+| **GET** | `/api/jws` | Get daily or monthly prayer schedules | ✅ Public |
 | **POST** | `/api/jws/sync` | Manually trigger monthly prayer schedule sync from external API to local DB | 🔐 Private |
 
 ### 4. Hadith (`/api/hadist`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/hadist` | Retrieve a random hadith from the local database | ❌ Public |
+| **GET** | `/api/hadist` | Retrieve a random hadith from the local database | ✅ Public |
 | **POST** | `/api/hadist/sync` | Sync 20 random hadiths for a given theme from external API to local DB | 🔐 Private |
 | **GET** | `/api/hadist/themes` | List all available hadith themes | 🔐 Private |
 | **GET** | `/api/hadist/themes/:id` | Get hadith theme details by ID | 🔐 Private |
@@ -201,7 +203,7 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 ### 6. Friday Sermon / Khotib (`/api/jadwal-khotib`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/jadwal-khotib` | Retrieve all Friday sermon/khotib assignments | ❌ Public |
+| **GET** | `/api/jadwal-khotib` | Retrieve all Friday sermon/khotib assignments | ✅ Public |
 | **GET** | `/api/jadwal-khotib/:id` | Get Friday sermon assignment details by ID | 🔐 Private |
 | **POST** | `/api/jadwal-khotib` | Create a new Friday sermon assignment | 🔐 Private |
 | **POST** | `/api/jadwal-khotib/import` | Bulk import Friday sermon assignments via JSON/Excel sheet | 🔐 Private |
@@ -211,7 +213,7 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 ### 7. Donation Program (`/api/program-donasi`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/program-donasi` | Get list of all donation programs | ❌ Public |
+| **GET** | `/api/program-donasi` | Get list of all donation programs | ✅ Public |
 | **GET** | `/api/program-donasi/:id` | Get donation program details by ID | 🔐 Private |
 | **POST** | `/api/program-donasi` | Create a new donation program | 🔐 Private |
 | **PUT** | `/api/program-donasi/:id` | Update donation program by ID | 🔐 Private |
@@ -225,7 +227,7 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 | **POST** | `/api/kas` | Log a new cash flow transaction (debit/credit) | 🔐 Private |
 | **PUT** | `/api/kas/:id` | Update an existing cash flow transaction record by ID | 🔐 Private |
 | **DELETE** | `/api/kas/:id` | Delete a cash flow transaction record by ID | 🔐 Private |
-| **GET** | `/api/kas/stats` | Retrieve total balance statistics (used on the TV Screen) | ❌ Public |
+| **GET** | `/api/kas/stats` | Retrieve total balance statistics (used on the TV Screen) | ✅ Public |
 
 ### 9. Audit Logs (`/api/audit-logs`)
 | Method | Endpoint | Description | Authentication |
@@ -235,8 +237,8 @@ All REST API requests should be sent to the base URL `http://localhost:5000/api`
 ### 10. Region Proxy (`/api/wilayah`)
 | Method | Endpoint | Description | Authentication |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/wilayah/provinces` | Proxy request to fetch all Indonesian provinces from external API | ❌ Public |
-| **GET** | `/api/wilayah/regencies/:provinceCode` | Proxy request to fetch regencies/cities by province code | ❌ Public |
+| **GET** | `/api/wilayah/provinces` | Proxy request to fetch all Indonesian provinces from external API | ✅ Public |
+| **GET** | `/api/wilayah/regencies/:provinceCode` | Proxy request to fetch regencies/cities by province code | ✅ Public |
 
 ---
 
