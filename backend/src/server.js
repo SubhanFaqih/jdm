@@ -16,7 +16,9 @@ import wilayahRoutes from './routes/wilayahRoutes.js';
 import cookieParser from 'cookie-parser';
 import { initScheduler } from './services/schedulerService.js';
 import { initSocket } from './services/socketService.js';
+import { startPrayerStateBroadcaster } from './services/prayerStateBroadcaster.js';
 import authRoutes from './routes/authRoutes.js';
+import timeRoutes from './routes/timeRoutes.js';
 
 dotenv.config();
 
@@ -31,6 +33,7 @@ initSocket(httpServer);
 
 await connectDB();
 initScheduler();
+startPrayerStateBroadcaster();
 
 app.use(express.json());
 app.use(cookieParser()); // Parsing cookies
@@ -39,6 +42,7 @@ app.use(cookieParser()); // Parsing cookies
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/time", timeRoutes);
 app.use("/api/jws", jwsRoutes);
 app.use("/api/hadist", hadistRoutes);
 app.use("/api/ustadz", ustadzRoutes);

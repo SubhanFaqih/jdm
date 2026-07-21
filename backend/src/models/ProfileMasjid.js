@@ -39,6 +39,10 @@ const profileMasjidSchema = new mongoose.Schema({
     ashar: { type: Number, default: 10 },
     maghrib: { type: Number, default: 7 },
     isya: { type: Number, default: 10 }
+  },
+  durasi_sholat: {
+    type: Number,
+    default: 5
   }
 }, { 
   timestamps: true 
