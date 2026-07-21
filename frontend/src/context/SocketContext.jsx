@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -6,19 +6,22 @@ const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
   const queryClient = useQueryClient();
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     // Connect to WebSocket server relative to current location.
     // In development, this gets proxied via vite.config.js to http://localhost:5000.
-    const socket = io({
+    const socketInstance = io({
       transports: ['websocket', 'polling']
     });
 
-    socket.on('connect', () => {
+    setSocket(socketInstance);
+
+    socketInstance.on('connect', () => {
       console.log('Connected to real-time sync server');
     });
 
-    socket.on('data-updated', (data) => {
+    socketInstance.on('data-updated', (data) => {
       console.log(`Received real-time update event for target: ${data.target}`, data);
       
       const queryMap = {
@@ -40,17 +43,17 @@ export function SocketProvider({ children }) {
       }
     });
 
-    socket.on('disconnect', () => {
+    socketInstance.on('disconnect', () => {
       console.log('Disconnected from real-time sync server');
     });
 
     return () => {
-      socket.disconnect();
+      socketInstance.disconnect();
     };
   }, [queryClient]);
 
   return (
-    <SocketContext.Provider value={null}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );

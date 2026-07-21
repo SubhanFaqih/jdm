@@ -12,6 +12,8 @@ import { AnimatePresence } from 'framer-motion';
 import { useActiveProfile } from '../../hooks/useActiveProfile';
 import { useActiveHadist } from '../../hooks/useActiveHadist';
 import { useEffect } from 'react';
+import { usePrayerState } from '../../context/PrayerStateContext';
+import { PrayerOverlay } from '../../components/layout/PrayerOverlay';
 
 export function Home() {
   // 3 templates, switch every 15 seconds (15000 ms)
@@ -20,6 +22,9 @@ export function Home() {
   // Fetch active profile
   const { activeProfile } = useActiveProfile();
   const { activeHadist, refetch: refetchHadist } = useActiveHadist();
+
+  // Get active prayer state
+  const { state: prayerState, prayer, remaining } = usePrayerState();
 
   useEffect(() => {
     if (templateIndex === 1) {
@@ -68,6 +73,16 @@ export function Home() {
         <FooterMarquee activeProfile={activeProfile} />
       </div>
 
+      {/* Fullscreen Prayer State Overlay */}
+      <AnimatePresence>
+        {prayerState !== 'IDLE' && (
+          <PrayerOverlay
+            state={prayerState}
+            prayer={prayer}
+            remaining={remaining}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeProvider';
 import { SocketProvider } from './context/SocketContext';
 import { AuthProvider } from './context/AuthContext';
 import { TimeProvider } from './context/TimeContext';
+import { PrayerStateProvider } from './context/PrayerStateContext';
 import { AppRoutes } from './routes/AppRoutes';
 
 function App() {
@@ -11,9 +12,11 @@ function App() {
       <AuthProvider>
         <SocketProvider>
           <TimeProvider>
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
+            <PrayerStateProvider>
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </PrayerStateProvider>
           </TimeProvider>
         </SocketProvider>
       </AuthProvider>
